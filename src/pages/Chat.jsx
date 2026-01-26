@@ -28,6 +28,14 @@ const Chat = () => {
     // Load existing session messages if sessionId exists
     if (sessionId) {
       localStorage.setItem('currentSessionId', sessionId);
+      const loadSession = async () => {
+        try {
+          const response = await getSession(sessionId);
+          setMessages(response.data.session.messages);
+        } catch (error) {
+          alert('Failed to load session');
+        }
+      };
       loadSession();
     }
   }, [navigate, sessionId]);
@@ -41,15 +49,6 @@ const Chat = () => {
       navigate('/dashboard');
     } catch (error) {
       alert('Failed to delete session');
-    }
-  };
-
-  const loadSession = async () => {
-    try {
-      const response = await getSession(sessionId);
-      setMessages(response.data.session.messages);
-    } catch (error) {
-      alert('Failed to load session');
     }
   };
 
