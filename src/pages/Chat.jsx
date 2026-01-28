@@ -15,7 +15,10 @@ const Chat = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [therapistIndex, setTherapistIndex] = useState(0);
+  const [isListening, setIsListening] = useState(false);
+  const [language, setLanguage] = useState('en-US');
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const therapists = [
     "General Psychologist",
@@ -36,6 +39,23 @@ const Chat = () => {
       localStorage.clear();
       navigate('/');
       return;
+    }
+
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(prev => prev + ' ' + transcript);
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
     }
 
     // Load existing session messages if sessionId exists
@@ -92,6 +112,22 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      toast.error('Speech recognition not supported');
+      return;
+    }
+    
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.lang = language;
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -124,15 +160,31 @@ const Chat = () => {
     <div className="h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Header title="AI Assistant" showBack={true} showDelete={!!sessionId} onDelete={handleDelete} />
       
-      <div className="bg-gray-900/30 border-b border-gray-700/30 px-4 py-2">
+      <div className="bg-gray-900/30 border-b border-gray-700/30 px-4 py-2 flex gap-3 items-center">
         <select
           value={therapistIndex}
           onChange={(e) => setTherapistIndex(Number(e.target.value))}
-          className="max-w-xs px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="flex-1 max-w-xs px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         >
           {therapists.map((name, idx) => (
             <option key={idx} value={idx}>{name}</option>
           ))}
+        </select>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        >
+          <option value="en-US">English</option>
+          <option value="hi-IN">हिंदी</option>
+          <option value="mr-IN">मराठी</option>
+          <option value="bn-IN">বাংলা</option>
+          <option value="ta-IN">தமிழ்</option>
+          <option value="te-IN">తెలుగు</option>
+          <option value="gu-IN">ગુજરાતી</option>
+          <option value="kn-IN">ಕನ್ನಡ</option>
+          <option value="ml-IN">മലയാളം</option>
+          <option value="pa-IN">ਪੰਜਾਬੀ</option>
         </select>
       </div>
 
@@ -177,11 +229,21 @@ const Chat = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            onKeyPress={(e) => e.key === 'Enter' && !isListening && handleSend()}
             placeholder="Type your message..."
             className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             disabled={loading}
           />
+          <button
+            onClick={toggleListening}
+            className={`px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+              isListening 
+                ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse' 
+                : 'bg-gray-700 hover:bg-gray-600 text-white'
+            }`}
+          >
+            🎤
+          </button>
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
