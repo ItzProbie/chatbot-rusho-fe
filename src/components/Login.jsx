@@ -16,9 +16,13 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await loginAPI(formData);
+      const trimmedData = {
+        userName: formData.userName.trim(),
+        password: formData.password.trim()
+      };
+      const response = await loginAPI(trimmedData);
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userName', formData.userName);
+      localStorage.setItem('userName', trimmedData.userName);
       toast.success('Login successful!');
       navigate('/dashboard');
     } catch (error) {

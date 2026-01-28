@@ -16,9 +16,13 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await signUpAPI(formData);
+      const trimmedData = {
+        userName: formData.userName.trim(),
+        password: formData.password.trim()
+      };
+      const response = await signUpAPI(trimmedData);
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userName', formData.userName);
+      localStorage.setItem('userName', trimmedData.userName);
       toast.success('Account created successfully!');
       navigate('/dashboard');
     } catch (error) {

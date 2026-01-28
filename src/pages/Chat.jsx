@@ -160,11 +160,11 @@ const Chat = () => {
     <div className="h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Header title="AI Assistant" showBack={true} showDelete={!!sessionId} onDelete={handleDelete} />
       
-      <div className="bg-gray-900/30 border-b border-gray-700/30 px-4 py-2 flex gap-3 items-center">
+      <div className="bg-gray-900/30 border-b border-gray-700/30 px-2 md:px-4 py-2 flex gap-2 md:gap-3 items-center overflow-x-hidden">
         <select
           value={therapistIndex}
           onChange={(e) => setTherapistIndex(Number(e.target.value))}
-          className="flex-1 max-w-xs px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="flex-1 min-w-0 px-2 md:px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-xs md:text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         >
           {therapists.map((name, idx) => (
             <option key={idx} value={idx}>{name}</option>
@@ -173,18 +173,18 @@ const Chat = () => {
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="w-20 md:w-auto px-2 md:px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-xs md:text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition flex-shrink-0"
         >
-          <option value="en-US">English</option>
-          <option value="hi-IN">हिंदी</option>
-          <option value="mr-IN">मराठी</option>
-          <option value="bn-IN">বাংলা</option>
-          <option value="ta-IN">தமிழ்</option>
-          <option value="te-IN">తెలుగు</option>
-          <option value="gu-IN">ગુજરાતી</option>
-          <option value="kn-IN">ಕನ್ನಡ</option>
-          <option value="ml-IN">മലയാളം</option>
-          <option value="pa-IN">ਪੰਜਾਬੀ</option>
+          <option value="en-US">EN</option>
+          <option value="hi-IN">हि</option>
+          <option value="mr-IN">मर</option>
+          <option value="bn-IN">বা</option>
+          <option value="ta-IN">த</option>
+          <option value="te-IN">తె</option>
+          <option value="gu-IN">ગુ</option>
+          <option value="kn-IN">ಕ</option>
+          <option value="ml-IN">മ</option>
+          <option value="pa-IN">ਪੰ</option>
         </select>
       </div>
 
