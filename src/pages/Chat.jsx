@@ -31,6 +31,19 @@ const Chat = () => {
     "Mindfulness Therapist"
   ];
 
+  const languages = [
+    { code: 'en-US', name: 'English' },
+    { code: 'hi-IN', name: 'हिंदी' },
+    { code: 'mr-IN', name: 'मराठी' },
+    { code: 'bn-IN', name: 'বাংলা' },
+    { code: 'ta-IN', name: 'தமிழ்' },
+    { code: 'te-IN', name: 'తెలుగు' },
+    { code: 'gu-IN', name: 'ગુજરાતી' },
+    { code: 'kn-IN', name: 'ಕನ್ನಡ' },
+    { code: 'ml-IN', name: 'മലയാളം' },
+    { code: 'pa-IN', name: 'ਪੰਜਾਬੀ' }
+  ];
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userName = localStorage.getItem('userName');
@@ -173,18 +186,13 @@ const Chat = () => {
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-20 md:w-auto px-2 md:px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-xs md:text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition flex-shrink-0"
+          className="w-16 md:w-auto px-2 md:px-3 py-1.5 bg-gray-800/50 border border-gray-600/50 rounded-lg text-xs md:text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition flex-shrink-0"
         >
-          <option value="en-US">EN</option>
-          <option value="hi-IN">हि</option>
-          <option value="mr-IN">मर</option>
-          <option value="bn-IN">বা</option>
-          <option value="ta-IN">த</option>
-          <option value="te-IN">తె</option>
-          <option value="gu-IN">ગુ</option>
-          <option value="kn-IN">ಕ</option>
-          <option value="ml-IN">മ</option>
-          <option value="pa-IN">ਪੰ</option>
+          {languages.map((lang) => (
+            <option key={lang.code} value={lang.code}>
+              {lang.name}
+            </option>
+          ))}
         </select>
       </div>
 
