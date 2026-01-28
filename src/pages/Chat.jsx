@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Header from '../components/Header';
 import '../styles/markdown.css';
+import toast from 'react-hot-toast';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Chat = () => {
           const response = await getSession(sessionId);
           setMessages(response.data.session.messages);
         } catch (error) {
-          alert('Failed to load session');
+          toast.error('Failed to load session');
         }
       };
       loadSession();
@@ -41,15 +42,35 @@ const Chat = () => {
   }, [navigate, sessionId]);
 
   const handleDelete = async () => {
-    if (!window.confirm('Delete this chat?')) return;
-    
-    try {
-      await deleteSession(sessionId);
-      localStorage.removeItem('currentSessionId');
-      navigate('/dashboard');
-    } catch (error) {
-      alert('Failed to delete session');
-    }
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p className="text-white">Delete this chat?</p>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                await deleteSession(sessionId);
+                localStorage.removeItem('currentSessionId');
+                toast.success('Chat deleted');
+                navigate('/dashboard');
+              } catch {
+                toast.error('Failed to delete session');
+              }
+            }}
+            className="px-3 py-1 bg-red-600 text-white rounded"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 bg-gray-600 text-white rounded"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), { duration: Infinity });
   };
 
   useEffect(() => {
@@ -78,29 +99,29 @@ const Chat = () => {
         localStorage.setItem('currentSessionId', response.data.sessionId);
       }
     } catch (error) {
-      alert('Failed to send message');
+      toast.error('Failed to send message');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Header title="AI Assistant" showBack={true} showDelete={!!sessionId} onDelete={handleDelete} />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-20">
-            <p className="text-2xl mb-2">👋</p>
-            <p>Start a conversation with the AI assistant</p>
+          <div className="text-center text-gray-400 mt-20">
+            <p className="text-6xl mb-4">💬</p>
+            <p className="text-xl">Start a conversation with the AI assistant</p>
           </div>
         ) : (
           messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-lg ${
+              <div className={`max-w-xs md:max-w-md lg:max-w-2xl px-4 py-3 rounded-xl shadow-lg ${
                 msg.role === 'user' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-white text-gray-800 shadow'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
+                  : 'bg-gray-800/50 backdrop-blur-sm text-gray-100 border border-gray-700/50'
               }`}>
                 {msg.role === 'user' ? (
                   msg.content
@@ -115,15 +136,15 @@ const Chat = () => {
         )}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-white px-4 py-2 rounded-lg shadow">
-              <span className="animate-pulse">Typing...</span>
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 px-4 py-3 rounded-xl shadow-lg">
+              <span className="animate-pulse text-gray-300">AI is typing...</span>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="bg-white border-t p-4">
+      <div className="bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 p-4">
         <div className="flex gap-2 max-w-4xl mx-auto">
           <input
             type="text"
@@ -131,13 +152,13 @@ const Chat = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             disabled={loading}
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/30"
           >
             Send
           </button>
