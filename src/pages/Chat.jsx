@@ -223,20 +223,20 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 p-4">
-        <div className="flex gap-2 max-w-4xl mx-auto">
+      <div className="bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 p-2 md:p-4">
+        <div className="flex gap-1 md:gap-2 w-full">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && !isListening && handleSend()}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="flex-1 min-w-0 px-3 md:px-4 py-2 md:py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm md:text-base"
             disabled={loading}
           />
           <button
             onClick={toggleListening}
-            className={`px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+            className={`px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold transition-all duration-300 flex-shrink-0 ${
               isListening 
                 ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse' 
                 : 'bg-gray-700 hover:bg-gray-600 text-white'
@@ -247,7 +247,7 @@ const Chat = () => {
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/30"
+            className="px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/30 flex-shrink-0 text-sm md:text-base"
           >
             Send
           </button>
