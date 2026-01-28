@@ -20,11 +20,9 @@ const Signup = () => {
         userName: formData.userName.trim(),
         password: formData.password.trim()
       };
-      const response = await signUpAPI(trimmedData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userName', trimmedData.userName);
+      await signUpAPI(trimmedData);
       toast.success('Account created successfully!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Signup failed');
     } finally {
