@@ -157,19 +157,13 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    console.log('Voice input effect triggered:', isVoiceInput, input);
     if (isVoiceInput && input.trim()) {
       if (sendTimeoutRef.current) {
         clearTimeout(sendTimeoutRef.current);
       }
       sendTimeoutRef.current = setTimeout(() => {
-        console.log('Timeout fired, checking isVoiceInput');
-        // Check if still voice input before sending
         if (document.querySelector('input[type="text"]')?.dataset.voiceInput === 'true') {
-          console.log('Auto-sending message');
           handleSend();
-        } else {
-          console.log('Cancelled - user edited');
         }
       }, 3000);
     }
@@ -178,6 +172,7 @@ const Chat = () => {
         clearTimeout(sendTimeoutRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVoiceInput]);
 
   const toggleListening = () => {

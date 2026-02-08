@@ -1,11 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMoodAnalysisByDateRange } from '../api';
 import Header from '../components/Header';
 
 const MoodAnalysis = () => {
   const navigate = useNavigate();
-  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [timeRange, setTimeRange] = useState('7days');
   const [averageMood, setAverageMood] = useState(null);
