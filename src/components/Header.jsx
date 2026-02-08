@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const Header = ({ title = "AI Assistant", showBack = false, showDelete = false, onDelete }) => {
+const Header = ({ title = "AI Assistant", showBack = false, showDelete = false, onDelete, backPath = '/dashboard' }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -22,7 +22,7 @@ const Header = ({ title = "AI Assistant", showBack = false, showDelete = false, 
         )}
         {showBack && (
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate(backPath)}
             className="px-4 py-2 bg-gray-700/20 hover:bg-gray-700/30 text-gray-300 rounded-lg transition-all duration-300 border border-gray-600/30"
           >
             Back

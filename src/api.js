@@ -58,3 +58,20 @@ export const chat = (props) => {
         }
     });
 }
+
+// Mood Analysis routes
+export const getMoodAnalysisByDateRange = (startDate, endDate) => {
+    return api.get(`mood-analysis/date-range?startDate=${startDate}&endDate=${endDate}`, {
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+}
+
+export const analyzeMoodBySessionIds = (sessionIds) => {
+    return api.patch('mood-analysis/by-sessions', { sessionIds }, {
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+}

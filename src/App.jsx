@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Mychats from "./pages/Mychats";
 import Chat from "./pages/Chat";
+import MoodAnalysis from "./pages/MoodAnalysis";
 
 
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/my-chats" element={<Mychats/>}/>
+        <Route path="/mood-analysis" element={<MoodAnalysis/>}/>
         <Route path="/new-chat" element={<Chat/>}/>
         <Route path="/chat/:sessionId" element={<Chat/>}/>
       </Routes>
