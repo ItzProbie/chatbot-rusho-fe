@@ -13,6 +13,7 @@ const MoodAnalysis = () => {
   const [sessionsData, setSessionsData] = useState([]);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
+  const [showRemedies, setShowRemedies] = useState(false);
   const [selectedMetrics, setSelectedMetrics] = useState({
     anxiety: true,
     stress: true,
@@ -138,6 +139,14 @@ const MoodAnalysis = () => {
             className="w-full md:w-auto px-3 py-2.5 bg-blue-600 hover:bg-green-600 text-white rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Analyzing...' : 'Analyze'}
+          </button>
+
+          <button
+            onClick={() => setShowRemedies(true)}
+            disabled={!averageMood}
+            className="w-full md:w-auto px-3 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            View Remedies
           </button>
         </div>
 
@@ -276,6 +285,67 @@ const MoodAnalysis = () => {
             <div className="text-6xl mb-4">📊</div>
             <h3 className="text-2xl font-semibold text-white mb-2">No analysis yet</h3>
             <p className="text-gray-400">Select a time range and click "Analyze Mood" to see your data</p>
+          </div>
+        )}
+
+        {showRemedies && averageMood && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowRemedies(false)}>
+            <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-white">Personalized Remedies</h2>
+                <button onClick={() => setShowRemedies(false)} className="text-gray-400 hover:text-white text-2xl">&times;</button>
+              </div>
+              
+              <div className="space-y-4">
+                {averageMood.anxiety >= 5 && (
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-red-400 mb-2">For Anxiety</h3>
+                    <ul className="text-gray-300 space-y-2 text-sm">
+                      <li>• Practice deep breathing exercises (4-7-8 technique)</li>
+                      <li>• Try progressive muscle relaxation</li>
+                      <li>• Limit caffeine and alcohol intake</li>
+                      <li>• Engage in regular physical activity</li>
+                    </ul>
+                  </div>
+                )}
+
+                {averageMood.stress >= 5 && (
+                  <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-orange-400 mb-2">For Stress</h3>
+                    <ul className="text-gray-300 space-y-2 text-sm">
+                      <li>• Take regular breaks during work</li>
+                      <li>• Practice time management techniques</li>
+                      <li>• Try meditation or yoga</li>
+                      <li>• Maintain a consistent sleep schedule</li>
+                    </ul>
+                  </div>
+                )}
+
+                {averageMood.depression >= 5 && (
+                  <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-blue-400 mb-2">For Depression</h3>
+                    <ul className="text-gray-300 space-y-2 text-sm">
+                      <li>• Spend time outdoors in natural sunlight</li>
+                      <li>• Connect with friends and family</li>
+                      <li>• Set small, achievable daily goals</li>
+                      <li>• Consider professional counseling</li>
+                    </ul>
+                  </div>
+                )}
+
+                {averageMood.overall < 7 && (
+                  <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-green-400 mb-2">General Wellbeing</h3>
+                    <ul className="text-gray-300 space-y-2 text-sm">
+                      <li>• Maintain a balanced diet with whole foods</li>
+                      <li>• Stay hydrated throughout the day</li>
+                      <li>• Practice gratitude journaling</li>
+                      <li>• Engage in hobbies you enjoy</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
