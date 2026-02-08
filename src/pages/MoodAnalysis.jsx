@@ -87,7 +87,6 @@ const MoodAnalysis = () => {
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
       
       // Title
       pdf.setFontSize(18);
