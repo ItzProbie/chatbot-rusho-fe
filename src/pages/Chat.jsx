@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import Header from '../components/Header';
 import '../styles/markdown.css';
 import toast from 'react-hot-toast';
+import { helplineData } from '../helpline';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const Chat = () => {
   const [showMoodPopup, setShowMoodPopup] = useState(false);
   const [moodData, setMoodData] = useState(null);
   const [analyzingMood, setAnalyzingMood] = useState(false);
+  const [showCrisisPopup, setShowCrisisPopup] = useState(false);
+  const [crisisHelpline, setCrisisHelpline] = useState(null);
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
   const sendTimeoutRef = useRef(null);
@@ -229,7 +232,34 @@ const Chat = () => {
       const aiMessage = { role: 'ai', content: response.data.response };
       setMessages(prev => [...prev, aiMessage]);
       
-      if (wasVoiceInput && 'speechSynthesis' in window) {
+      if (response.data.crisisDetected) {
+        const helpline = helplineData[language] || helplineData['en-US'];
+        setCrisisHelpline(helpline);
+        setShowCrisisPopup(true);
+        
+        // Always speak crisis helpline, cancel any ongoing speech
+        if ('speechSynthesis' in window) {
+          speechSynthesis.cancel();
+          const crisisText = `${helpline.title}. ${helpline.body} ${helpline.helplines.join('. ')}. ${helpline.footer}`;
+          const utterance = new SpeechSynthesisUtterance(crisisText);
+          utterance.lang = language;
+          
+          const setVoiceAndSpeak = () => {
+            const voices = speechSynthesis.getVoices();
+            const matchingVoice = voices.find(voice => voice.lang.startsWith(language.split('-')[0]));
+            if (matchingVoice) {
+              utterance.voice = matchingVoice;
+            }
+            speechSynthesis.speak(utterance);
+          };
+          
+          if (speechSynthesis.getVoices().length > 0) {
+            setVoiceAndSpeak();
+          } else {
+            speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+          }
+        }
+      } else if (wasVoiceInput && 'speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(response.data.response);
         utterance.lang = language;
         
@@ -478,6 +508,38 @@ const Chat = () => {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showCrisisPopup && crisisHelpline && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => {
+          setShowCrisisPopup(false);
+          if ('speechSynthesis' in window) {
+            speechSynthesis.cancel();
+          }
+        }}>
+          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full shadow-2xl border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-red-500">Crisis Detected</h2>
+              <button onClick={() => {
+                setShowCrisisPopup(false);
+                if ('speechSynthesis' in window) {
+                  speechSynthesis.cancel();
+                }
+              }} className="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div className="space-y-4 text-gray-200">
+              <p className="text-lg font-semibold">{crisisHelpline.title}</p>
+              <p>{crisisHelpline.body}</p>
+              <ul className="space-y-2">
+                {crisisHelpline.helplines.map((line, idx) => (
+                  <li key={idx} className="text-sm bg-gray-700/50 p-2 rounded">{line}</li>
+                ))}
+              </ul>
+              <p className="text-sm italic">{crisisHelpline.footer}</p>
+            </div>
           </div>
         </div>
       )}
