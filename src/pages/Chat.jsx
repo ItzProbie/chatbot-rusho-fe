@@ -232,7 +232,22 @@ const Chat = () => {
       if (wasVoiceInput && 'speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(response.data.response);
         utterance.lang = language;
-        speechSynthesis.speak(utterance);
+        
+        // Wait for voices to load and find best match
+        const setVoiceAndSpeak = () => {
+          const voices = speechSynthesis.getVoices();
+          const matchingVoice = voices.find(voice => voice.lang.startsWith(language.split('-')[0]));
+          if (matchingVoice) {
+            utterance.voice = matchingVoice;
+          }
+          speechSynthesis.speak(utterance);
+        };
+        
+        if (speechSynthesis.getVoices().length > 0) {
+          setVoiceAndSpeak();
+        } else {
+          speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+        }
       }
       
       if (!sessionId && response.data.sessionId) {
@@ -250,6 +265,10 @@ const Chat = () => {
     return () => {
       if (sendTimeoutRef.current) {
         clearTimeout(sendTimeoutRef.current);
+      }
+      // Stop speech when leaving page
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
       }
     };
   }, []);
